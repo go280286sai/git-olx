@@ -35,10 +35,10 @@ while k!=len(records):
     mas.append(records[k][0])
     k+=1
 if today_day in mas:
-    print("На текущую дату курс выставлен")
+    print("On this date kurs is have")
 else:       
     Kmas=[today_day, USD_buy, USD_sell]
     con.execute("""INSERT INTO kurs(data_k, USD_buy, USD_sell) VALUES (?, ?, ?);""", Kmas)
     con.commit()
-print('Курс продать:', USD_buy)
-print('Курс купить:', USD_sell)
+print('Kurs buy:', USD_buy)
+print('Kurs sell:', USD_sell)
