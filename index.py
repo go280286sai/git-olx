@@ -4,7 +4,7 @@ from datetime import datetime
 import sqlite3
 import kurs
 import settings
-
+import parsing
 m = True
 while m == True:
     print('Добрый день, выберете действие:')
@@ -36,3 +36,5 @@ while m == True:
                 print("Вы не правильно ввели цифру, попробуйте еще")
     if n == 5:
         settings.setf()
+    if n == 1:
+        parsing.parse()

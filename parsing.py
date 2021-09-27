@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import csv
 from datetime import datetime
 import sqlite3 
+import os
 #-----------------------------------------------------------------------------------------------------------------------------
 con = sqlite3.connect('database.db')
 cur = con.cursor()
@@ -45,7 +46,18 @@ def save_file(items, path):
             writer.writerow([item['title'], item['link'], item['price']])
 #-----------------------------------------------------------------------------------------------------------------------------
 def parse():
-    URL = input('Insert URL: ')
+    print('1. Ввести URL вручную')
+    print('2. Ввести URL из настроек')
+    n = int(input('Введите цифру '))
+    if n == 1:
+        URL = input('Insert URL: ')
+    elif n == 2:
+        sqlite_select_query = """SELECT ref from settings"""
+        cur.execute(sqlite_select_query)
+        records = cur.fetchone()
+        mas = []
+        mas.append(records[0])
+        URL =  mas[0]  
     URL = URL.strip()
     html = get_html(URL)
     if html.status_code == 200:
@@ -59,15 +71,16 @@ def parse():
         print(f'Get {len(mass)} count')
     else:
         print('Error')
-parse()
+
 #-----------------------------------------------------------------------------------------------------------------------------
 con.execute("""CREATE TABLE IF NOT EXISTS create_parse(
 create_parse INTEGER PRIMARY KEY AUTOINCREMENT,
 name TEXT,
 path TEXT);""")
-con.commit()
+
 #-----------------------------------------------------------------------------------------------------------------------------
 path='data/'+FILE
 nmas=[FILE, path]
-con.execute("""INSERT INTO create_parse(name, path) VALUES (?, ?);""",nmas)
+con.execute("""INSERT INTO create_parse(name, path) VALUES (?, ?);""", nmas)
 con.commit()
+os.open(path, os.O_RDWR)

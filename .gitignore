@@ -3,8 +3,11 @@ Pipfile
 README
 __pycache__/
 bin/
+data/
+data/*
 lib/
 lib64
+parsing_olx_2021-09-27.csv
 pyvenv.cfg
 requirements.txt
 share/
