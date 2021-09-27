@@ -43,4 +43,3 @@ def kurs():
         con.commit()
     print('Kurs buy:', USD_buy)
     print('Kurs sell:', USD_sell)
-kurs()
