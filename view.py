@@ -4,9 +4,9 @@ import sqlite3
 import pandas as pd
 from datetime import datetime
 #-----------------------------------------------------------------------------------------------------------------------------
-today_day=datetime.today().strftime('%Y-%m-%d')
-file_name='parsing_olx_{}.xlsx'
-FILE=file_name.format(today_day)
+#today_day=datetime.today().strftime('%Y-%m-%d')
+#file_name='parsing_olx_{}.xlsx'
+#FILE=file_name.format(today_day)
 #-----------------------------------------------------------------------------------------------------------------------------
 con = sqlite3.connect('database.db')
 cur = con.cursor()
@@ -18,7 +18,16 @@ def my_price(price):
         if price[i]!=' ':
             total+=price[i]
     total=total[:-1]
-    return int(total)
+    return float(total)
+def get_ref(ref):
+    URL=str(ref)
+    HEADERS = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0', 'accept': '*/*'}
+    r=requests.get(URL, params=None, headers=HEADERS)
+    html_doc=r.text
+    soup = BeautifulSoup(html_doc, 'html.parser')
+    items = soup.find_all('p', class_='css-xl6fe0-Text eu5v0x0')
+    return items
+
 #-----------------------------------------------------------------------------------------------------------------------------    
 def scan_full_type_b(ref):
     URL=str(ref)
@@ -38,6 +47,7 @@ def scan_full_type_b(ref):
             type_b='Владелец'
             break
     return type_b
+
 #-----------------------------------------------------------------------------------------------------------------------------
 def scan_full_etajnost(ref):
     URL=str(ref)
@@ -83,7 +93,8 @@ def scan_full_komnati(ref):
         mass.append(item.get_text())
     for item in mass:
         if 'Количество комнат:' in item:
-            komnati=str(item.split()[-1])
+            komnati=item.split()
+            komnati=str(komnati[2])
             break
     if komnati!=0 and komnati!='' and komnati!=' ':
         return komnati
@@ -108,15 +119,16 @@ t=con.execute(sqlite_select_query)
 path=t.fetchone()
 con.commit()
 path=str(path[0])
-print(path)
+
 #-----------------------------------------------------------------------------------------------------------------------------
-data=pd.read_csv(path, sep=';')
-data['price']=data.price.apply(my_price)
-data['type_b']=data.ref.apply(scan_full_type_b)
-data['etajnost']=data.ref.apply(scan_full_etajnost)
-data['etaj']=data.ref.apply(scan_full_etaj)
-data['komnati']=data.ref.apply(scan_full_komnati)
-data['opis']=data.ref.apply(scan_full_opis)
-data.to_csv('full_parser.csv')
-data.to_excel(FILE, sheet_name='full')
-print('ok')
+def get_full():
+    data=pd.read_csv(path, sep=';')
+    data=data.head(300)
+    data['price']=data.price.apply(my_price)
+    data['type_b']=data.ref.apply(scan_full_type_b)
+    data['etajnost']=data.ref.apply(scan_full_etajnost)
+    data['etaj']=data.ref.apply(scan_full_etaj)
+    data['komnati']=data.ref.apply(scan_full_komnati)
+    data['opis']=data.ref.apply(scan_full_opis)
+    data.to_csv('full_parser.csv', sep=';')
+    print('ok')

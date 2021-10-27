@@ -37,9 +37,7 @@ con.execute("""INSERT INTO kurs(data_k, USD_buy, USD_sell) VALUES (?, ?, ?);""",
 con.commit()
 #-----------------------------------------------------------------------------------------------------------------------------
 data=pd.read_csv('full_parser.csv')
-data_type=data.groupby('type_b', as_index=False).count()[['type_b', 'title']]
-data_type.to_csv('analitika.csv', mode='a')
-print(data_type)
+
 #-----------------------------------------------------------------------------------------------------------------------------
 data_local=data.groupby('local', as_index=False).count()[['local', 'title']]
 data_local.to_csv('analitika.csv', mode='a')

@@ -34,16 +34,17 @@ def get_content(html):
         mass.append({
             'title': item.find('strong').get_text(strip=True),
             'link': item.find('a').get('href'),
-            'price': item.find('strong').find_next('strong').get_text()
+            'price': item.find('strong').find_next('strong').get_text(),
+            'location' : item.find('p').find_next('p', class_='lheight16').get_text().split()[1]
         })
     return mass
 #-----------------------------------------------------------------------------------------------------------------------------
 def save_file(items, path):
     with open(path, 'w', newline='',  encoding='utf-8') as file:
         writer = csv.writer(file, delimiter=';')
-        writer.writerow(['title', 'ref', 'price'])
+        writer.writerow(['title', 'ref', 'location', 'price'])
         for item in items:
-            writer.writerow([item['title'], item['link'], item['price']])
+            writer.writerow([item['title'], item['link'], item['location'] ,item['price']])
 #-----------------------------------------------------------------------------------------------------------------------------
 def parse():
     print('1. Ввести URL вручную')
@@ -83,4 +84,3 @@ path='data/'+FILE
 nmas=[FILE, path]
 con.execute("""INSERT INTO create_parse(name, path) VALUES (?, ?);""", nmas)
 con.commit()
-os.open(path, os.O_RDWR)
